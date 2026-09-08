@@ -1,0 +1,6 @@
+<?php
+require_once '../app/config/app.php'; require_once '../app/config/database.php';
+$id=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT); $toko=filter_input(INPUT_GET,'toko',FILTER_VALIDATE_INT);
+if(!$id||!$toko){header('Location: index.php');exit;}
+$stmt=$koneksi->prepare('SELECT p.*,t.nama_toko FROM pesanan p JOIN toko t ON t.id_toko=p.id_toko WHERE p.id_pesanan=? AND p.id_toko=?');$stmt->bind_param('ii',$id,$toko);$stmt->execute();$order=$stmt->get_result()->fetch_assoc();if(!$order){header('Location: index.php');exit;}
+?><!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pesanan Dibuat</title><link rel="stylesheet" href="assets/css/style.css"></head><body><main style="max-width:650px;margin:80px auto;padding:24px;text-align:center"><div class="checkout-card" style="background:#fff;padding:32px;border-radius:20px"><h1>Pesanan berhasil dibuat</h1><p>Nomor pesanan: <strong>#<?= (int)$order['id_pesanan'] ?></strong></p><p><?= e($order['nama_toko']) ?></p><p>Total: <strong>Rp <?= number_format($order['total'],0,',','.') ?></strong></p><p>Status: <?= e($order['status']) ?></p><a class="btn-checkout" href="page_menu.php?id_toko=<?= (int)$toko ?>">Kembali ke Toko</a></div></main></body></html>
