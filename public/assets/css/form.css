@@ -709,13 +709,185 @@ footer {
 }
 
 .admin-nav .nav-link:hover,
-.admin-nav .nav-link:focus-visible {
+.admin-nav .nav-link:focus-visible,
+.admin-nav .nav-link.active {
     color: var(--text);
     border-color: var(--border);
     background: rgba(255, 255, 255, 0.06);
 }
 
+.admin-nav .nav-link.active {
+    border-color: rgba(240, 165, 0, 0.45);
+    background: rgba(240, 165, 0, 0.12);
+    color: var(--accent);
+}
+
 .admin-nav .nav-link .icon { width: auto; color: var(--accent); }
+
+.dashboard-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dashboard-quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.btn-hero-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240, 165, 0, 0.08);
+}
+
+.dashboard-card-sub {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dashboard-card-highlight {
+    border-color: rgba(240, 165, 0, 0.45) !important;
+}
+
+.admin-alert-success {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.12);
+    color: #86efac;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.status-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.status-tab:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+}
+
+.status-tab.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #0f1623;
+}
+
+.status-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-tab.active .status-tab-count {
+    background: rgba(15, 22, 35, 0.18);
+}
+
+.order-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.order-status-baru {
+    background: rgba(240, 165, 0, 0.16);
+    color: var(--accent);
+    border: 1px solid rgba(240, 165, 0, 0.35);
+}
+
+.order-status-diproses {
+    background: rgba(59, 130, 246, 0.16);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.order-status-selesai {
+    background: rgba(34, 197, 94, 0.16);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.order-status-dibatalkan {
+    background: rgba(239, 68, 68, 0.16);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.btn-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.btn-detail:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
 
 .admin-logout-form { margin-left: auto; flex: 0 0 auto; }
 

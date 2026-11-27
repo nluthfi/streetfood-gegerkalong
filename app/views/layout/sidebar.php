@@ -1,53 +1,32 @@
+<?php
+$currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
+$navItems = [
+    ['url' => 'admin/dashboard.php', 'match' => '/admin/dashboard.php', 'icon' => 'fa-house', 'label' => 'Dashboard'],
+    ['url' => 'admin/kategori/kategori.php', 'match' => '/admin/kategori/', 'icon' => 'fa-grip', 'label' => 'Kategori'],
+    ['url' => 'admin/mitra/mitra.php', 'match' => '/admin/mitra/', 'icon' => 'fa-building-columns', 'label' => 'Mitra'],
+    ['url' => 'admin/bayar/bayar.php', 'match' => '/admin/bayar/', 'icon' => 'fa-money-bill-wave', 'label' => 'Metode Pembayaran'],
+    ['url' => 'admin/pesanan/pesanan.php', 'match' => '/admin/pesanan/', 'icon' => 'fa-receipt', 'label' => 'Pesanan'],
+    ['url' => 'admin/toko/toko.php', 'match' => '/admin/toko/', 'icon' => 'fa-store', 'label' => 'Toko'],
+    ['url' => 'admin/menu/menu.php', 'match' => '/admin/menu/', 'icon' => 'fa-clipboard-list', 'label' => 'Menu'],
+];
+?>
 <header class="admin-topbar">
     <a class="admin-brand" href="<?= app_url('admin/dashboard.php') ?>">
         <span class="admin-brand-icon">🍜</span>
         <span class="admin-brand-text">STREET FOOD<small>GEGERKALONG</small></span>
     </a>
 
-    <nav class="admin-nav">
-
-        <a class="nav-link" href="<?= app_url('admin/dashboard.php') ?>">
+    <nav class="admin-nav" aria-label="Navigasi admin">
+        <?php foreach ($navItems as $item):
+            $isActive = str_contains($currentScript, $item['match']);
+        ?>
+        <a class="nav-link<?= $isActive ? ' active' : '' ?>" href="<?= app_url($item['url']) ?>"<?= $isActive ? ' aria-current="page"' : '' ?>>
             <span class="icon">
-                <i class="fa-solid fa-house"></i>
+                <i class="fa-solid <?= e($item['icon']) ?>" aria-hidden="true"></i>
             </span>
-            <span class="description">Dashboard</span>
+            <span class="description"><?= e($item['label']) ?></span>
         </a>
-
-        <a class="nav-link" href="<?= app_url('admin/kategori/kategori.php') ?>">
-            <span class="icon">
-                <i class="fa-solid fa-grip"></i>
-            </span>
-            <span class="description">Kategori</span>
-        </a>
-
-        <a class="nav-link" href="<?= app_url('admin/mitra/mitra.php') ?>">
-            <span class="icon">
-                <i class="fa-solid fa-building-columns"></i>
-            </span>
-            <span class="description">Mitra</span>
-        </a>
-
-        <a class="nav-link" href="<?= app_url('admin/bayar/bayar.php') ?>">
-            <span class="icon">
-                <i class="fa-solid fa-money-bill-wave"></i>
-            </span>
-            <span class="description">Metode Pembayaran</span>
-        </a>
-
-        <a class="nav-link" href="<?= app_url('admin/pesanan/pesanan.php') ?>">
-            <span class="icon"><i class="fa-solid fa-receipt"></i></span>
-            <span class="description">Pesanan</span>
-        </a>
-
-        <a class="nav-link" href="<?= app_url('admin/toko/toko.php') ?>">
-            <span class="icon"><i class="fa-solid fa-store"></i></span>
-            <span class="description">Toko</span>
-        </a>
-
-        <a class="nav-link" href="<?= app_url('admin/menu/menu.php') ?>">
-            <span class="icon"><i class="fa-solid fa-clipboard-list"></i></span>
-            <span class="description">Menu</span>
-        </a>
+        <?php endforeach; ?>
 
         <form action="<?= app_url('admin/auth/logout.php') ?>" method="POST" class="admin-logout-form">
             <?= csrf_field() ?>
@@ -56,6 +35,5 @@
                 <span>Logout</span>
             </button>
         </form>
-
     </nav>
 </header>
