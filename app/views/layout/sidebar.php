@@ -6,6 +6,7 @@ $navItems = [
     ['url' => 'admin/mitra/mitra.php', 'match' => '/admin/mitra/', 'icon' => 'fa-building-columns', 'label' => 'Mitra'],
     ['url' => 'admin/bayar/bayar.php', 'match' => '/admin/bayar/', 'icon' => 'fa-money-bill-wave', 'label' => 'Metode Pembayaran'],
     ['url' => 'admin/pesanan/pesanan.php', 'match' => '/admin/pesanan/', 'icon' => 'fa-receipt', 'label' => 'Pesanan'],
+    ['url' => 'admin/ulasan/ulasan.php', 'match' => '/admin/ulasan/', 'icon' => 'fa-star', 'label' => 'Ulasan'],
     ['url' => 'admin/toko/toko.php', 'match' => '/admin/toko/', 'icon' => 'fa-store', 'label' => 'Toko'],
     ['url' => 'admin/menu/menu.php', 'match' => '/admin/menu/', 'icon' => 'fa-clipboard-list', 'label' => 'Menu'],
 ];

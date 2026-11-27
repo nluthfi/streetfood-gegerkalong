@@ -98,16 +98,16 @@ $statusMeta = [
             </div>
         </article>
 
-        <article class="dashboard-card">
+        <a href="<?= app_url('admin/ulasan/ulasan.php') ?>" class="dashboard-card dashboard-card-link">
             <div>
                 <h6>Total Ulasan</h6>
                 <h3><?= number_format((int) $stats['total_ulasan']) ?></h3>
-                <span class="dashboard-card-sub">Ulasan pelanggan toko</span>
+                <span class="dashboard-card-sub">Kelola ulasan pelanggan</span>
             </div>
             <div class="card-icon">
                 <i class="fa-solid fa-star" aria-hidden="true"></i>
             </div>
-        </article>
+        </a>
 
         <article class="dashboard-card">
             <div>
