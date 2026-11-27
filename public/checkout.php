@@ -53,7 +53,24 @@ try {
 <title>Checkout - <?= e($storeName) ?></title>
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-.checkout-wrap{max-width:900px;margin:40px auto;padding:0 20px}.checkout-card{background:var(--card-bg,#fff);border-radius:20px;padding:24px;box-shadow:0 10px 35px rgba(0,0,0,.08);margin-bottom:20px}.checkout-item{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #eee}.checkout-item img{width:70px;height:70px;object-fit:cover;border-radius:12px}.checkout-item .grow{flex:1}.checkout-form{display:grid;gap:14px}.checkout-form label{font-weight:700}.checkout-form input,.checkout-form textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px}.checkout-total{display:flex;justify-content:space-between;font-weight:800;font-size:20px;margin-top:20px}.checkout-actions{display:flex;gap:10px;flex-wrap:wrap}.checkout-actions a,.checkout-actions button{border:0;border-radius:10px;padding:12px 18px;text-decoration:none;cursor:pointer}.checkout-actions a{background:#eee;color:#222}.checkout-actions button{background:#111;color:#fff}
+.checkout-wrap{max-width:900px;margin:40px auto;padding:0 20px}
+.checkout-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 10px 35px rgba(0,0,0,.22);margin-bottom:20px;color:var(--text)}
+.checkout-card h1,.checkout-card h2{margin-bottom:6px;color:var(--text)}
+.checkout-card p{color:var(--text-muted)}
+.checkout-item{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.checkout-item img{width:70px;height:70px;object-fit:cover;border-radius:12px}
+.checkout-item .grow{flex:1}
+.checkout-item .grow div{color:var(--text-muted);font-size:14px;margin-top:4px}
+.checkout-form{display:grid;gap:14px;margin-top:14px}
+.checkout-form label{font-weight:700;color:var(--text)}
+.checkout-form input,.checkout-form textarea{width:100%;padding:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;font:inherit}
+.checkout-form input:focus,.checkout-form textarea:focus{outline:none;border-color:var(--accent)}
+.checkout-total{display:flex;justify-content:space-between;font-weight:800;font-size:20px;margin-top:20px;color:var(--accent)}
+.checkout-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.checkout-actions a,.checkout-actions button{border:0;border-radius:10px;padding:12px 18px;text-decoration:none;cursor:pointer;font-weight:700;font:inherit}
+.checkout-actions a{background:var(--bg);border:1px solid var(--border);color:var(--text)}
+.checkout-actions button{background:var(--accent);color:#0f1623}
+.checkout-actions button:hover{background:#e09800}
 </style>
 </head>
 <body>

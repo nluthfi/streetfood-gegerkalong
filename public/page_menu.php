@@ -33,18 +33,26 @@ if ($jam_buka && $jam_tutup) {
 
 // ambil data mitra
 $mitras = [];
-$r = $koneksi->query(
+$stmtMitra = $koneksi->prepare(
     "SELECT m.* FROM toko_mitra tm 
      JOIN mitra m ON m.id_mitra = tm.id_mitra 
-     WHERE tm.id_toko = $id_toko");
+     WHERE tm.id_toko = ?"
+);
+$stmtMitra->bind_param('i', $id_toko);
+$stmtMitra->execute();
+$r = $stmtMitra->get_result();
 while ($row = $r->fetch_assoc()) $mitras[] = $row;
 
 // ambil data metode bayar
 $bayars = [];
-$r = $koneksi->query(
+$stmtBayar = $koneksi->prepare(
     "SELECT b.* FROM metode_toko mt 
      JOIN bayar b ON b.id_metode = mt.id_metode 
-     WHERE mt.id_toko = $id_toko");
+     WHERE mt.id_toko = ?"
+);
+$stmtBayar->bind_param('i', $id_toko);
+$stmtBayar->execute();
+$r = $stmtBayar->get_result();
 while ($row = $r->fetch_assoc()) $bayars[] = $row;
 
 // ambil data menu dengan filter
@@ -53,8 +61,8 @@ $filter_rasa = isset($_GET['rasa'])        ? $_GET['rasa']             : '';
 $filter_kat  = isset($_GET['kategori'])    ? (int)$_GET['kategori']    : 0;
 $sort_menu   = isset($_GET['sort'])        ? $_GET['sort']             : '';
 
-$where_m = ["m.id_toko = $id_toko"];
-$params_m = []; $types_m = '';
+$where_m = ['m.id_toko = ?'];
+$params_m = [$id_toko]; $types_m = 'i';
 
 // Filter menu berdasarkan search, rasa, dan kategori
 if ($search_menu !== '') {
@@ -116,22 +124,31 @@ foreach ($menus as $menu) {
 }
 
 // ambil semua data kategori
-$all_kat = $koneksi->query(
+$stmtKat = $koneksi->prepare(
     "SELECT DISTINCT k.id_kategori, k.kategori_makanan FROM menu m 
      JOIN kategori k ON k.id_kategori = m.id_kategori 
-     WHERE m.id_toko = $id_toko 
-     ORDER BY k.id_kategori");
+     WHERE m.id_toko = ? 
+     ORDER BY k.id_kategori"
+);
+$stmtKat->bind_param('i', $id_toko);
+$stmtKat->execute();
+$all_kat = $stmtKat->get_result();
 $kat_list = [];
 while ($k = $all_kat->fetch_assoc()) $kat_list[] = $k;
 
 // Reviews
 $reviews = [];
-$r = $koneksi->query(
+$stmtRev = $koneksi->prepare(
     "SELECT * FROM review 
-     WHERE id_toko = $id_toko 
+     WHERE id_toko = ? 
      ORDER BY tanggal_review DESC 
-     LIMIT 5");
+     LIMIT 5"
+);
+$stmtRev->bind_param('i', $id_toko);
+$stmtRev->execute();
+$r = $stmtRev->get_result();
 if ($r) while ($row = $r->fetch_assoc()) $reviews[] = $row;
+$reviewSuccess = ($_GET['review'] ?? '') === 'success';
 $rating_text = $toko['rating'] ? number_format($toko['rating'], 1) : '–';
 
 function fotoUrl($val, $folder) {
@@ -300,7 +317,7 @@ function fotoUrl($val, $folder) {
                                         <?= htmlspecialchars($menu['rasa']) ?>
                                     </span>
                                 <?php endif; ?>
-                                <div class="qty-control" data-id="<?= $menu['id_menu'] ?>">
+                                <div class="qty-control" id="qty-<?= $menu['id_menu'] ?>">
                                     <button class="btn-add" onclick="addToCart(<?= $menu['id_menu'] ?>)"><i
                                             class="fas fa-plus"></i> Tambah</button>
                                 </div>
@@ -367,6 +384,12 @@ function fotoUrl($val, $folder) {
         <!-- REVIEW FORM -->
         <div class="reviews-section" id="reviews">
             <div class="reviews-header">Tulis Ulasan</div>
+            <?php if ($reviewSuccess): ?>
+            <div class="review-alert" role="status">
+                <i class="fas fa-check-circle" aria-hidden="true"></i>
+                <span>Ulasan Anda berhasil dikirim. Terima kasih!</span>
+            </div>
+            <?php endif; ?>
             <form action="submit_review.php" method="POST" class="review-form">
                 <?= csrf_field() ?>
                 <input type="hidden" name="id_toko" value="<?= (int)$id_toko ?>">
@@ -403,7 +426,7 @@ function fotoUrl($val, $folder) {
             <?php foreach ($reviews as $rv): ?>
             <div class="review-card">
                 <div class="review-top">
-                    <div class="review-avatar"><?= strtoupper(substr($rv['nama_pengulas'],0,1)) ?></div>
+                    <div class="review-avatar"><?= htmlspecialchars(mb_strtoupper(mb_substr($rv['nama_pengulas'], 0, 1, 'UTF-8'), 'UTF-8')) ?></div>
                     <div>
                         <div class="review-name"><?= htmlspecialchars($rv['nama_pengulas']) ?></div>
                         <div class="review-stars">
@@ -455,7 +478,25 @@ function fotoUrl($val, $folder) {
     // simpan data menu yang dipilih
     let cart = {}; // { id: { nama, harga, foto, qty }
     const CART_KEY = 'streetfood_cart_toko_<?= (int)$id_toko ?>';
-    try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}') || {}; } catch (_) { cart = {}; } }
+    try {
+        const parsed = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            Object.entries(parsed).forEach(([id, item]) => {
+                const qty = parseInt(item?.qty, 10);
+                const harga = parseInt(item?.harga, 10);
+                if (/^\d+$/.test(id) && item && qty > 0 && Number.isFinite(harga) && harga >= 0) {
+                    cart[id] = {
+                        nama: String(item.nama || ''),
+                        harga,
+                        foto: String(item.foto || ''),
+                        qty: Math.min(qty, 99)
+                    };
+                }
+            });
+        }
+    } catch (_) {
+        cart = {};
+    }
 
     // Format rupiah
     function fmt(n) {
@@ -517,7 +558,9 @@ function fotoUrl($val, $folder) {
             foto,
             qty: 0
         };
-        cart[id].qty++;
+        if (cart[id].qty < 99) {
+            cart[id].qty++;
+        }
         renderQtyControl(id);
         persistCart();
         updateCartFloat();
@@ -531,7 +574,7 @@ function fotoUrl($val, $folder) {
     // Ubah jumlah menu di keranjang
     function changeQty(id, delta) {
         if (!cart[id]) return;
-        cart[id].qty += delta;
+        cart[id].qty = Math.min(99, cart[id].qty + delta);
         if (cart[id].qty <= 0) delete cart[id];
         renderQtyControl(id);
         persistCart();

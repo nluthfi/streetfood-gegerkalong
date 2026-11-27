@@ -30,6 +30,5 @@ try {
     $detail=$koneksi->prepare('INSERT INTO detail_pesanan (id_pesanan,id_menu,nama_menu,harga_satuan,jumlah,subtotal) VALUES (?,?,?,?,?,?)');
     foreach($rows as $r){$qty=(int)$cart[$r['id_menu']]['qty'];$sub=(int)$r['harga']*$qty;$detail->bind_param('iisiii',$idPesanan,$r['id_menu'],$r['nama_menu'],$r['harga'],$qty,$sub);$detail->execute();}
     $koneksi->commit();
-    $encoded=rawurlencode(json_encode(['ok'=>true]));
     header('Location: order_success.php?id=' . $idPesanan . '&toko=' . $idToko); exit;
 } catch(Throwable $e){if($koneksi->in_transaction)$koneksi->rollback(); http_response_code(400); exit(e($e->getMessage()));}
