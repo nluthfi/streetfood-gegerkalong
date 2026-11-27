@@ -126,19 +126,20 @@ foreach ($rows as $row) {
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Cari toko atau menu...">
         </div>
-        <div class="topbar">
-            <button class="btn-filter" id="btnFilter" onclick="openFilter()">
-                <i class="fas fa-sliders-h"></i>
+        <div class="topbar-right">
+            <button class="btn-filter" id="btnFilter" type="button" onclick="openFilter()">
+                <i class="fas fa-sliders-h" aria-hidden="true"></i>
                 <span>Filter</span>
                 <div class="filter-dot" id="filterDot"></div>
             </button>
-        </div>
-        <div class="topbar-right">
-            <button class="btn-login"
-                onclick="window.location.href='<?= app_url('admin/auth/login.php') ?>'">
-                <i class="fa-solid fa-circle-user"></i>
+            <a class="btn-nav-link" href="cek_pesanan.php">
+                <i class="fas fa-receipt" aria-hidden="true"></i>
+                <span>Cek Pesanan</span>
+            </a>
+            <a class="btn-login" href="<?= app_url('admin/auth/login.php') ?>">
+                <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
                 <span>Login</span>
-            </button>
+            </a>
         </div>
     </header>
 
@@ -205,6 +206,7 @@ foreach ($rows as $row) {
             ?>
 
             <a class="store-card" href="page_menu.php?id_toko=<?= $row['id_toko'] ?>" data-id="<?= $row['id_toko'] ?>"
+                data-title="<?= htmlspecialchars(mb_strtolower($row['nama_toko'], 'UTF-8'), ENT_QUOTES) ?>"
                 data-nama="<?= htmlspecialchars(strtolower($row['nama_toko'].' '.($row['lokasi']??'').' '.($row['menu_search_text']??'')),ENT_QUOTES) ?>"
                 data-halal="<?= htmlspecialchars($row['status_halal']??'') ?>"
                 data-jam-buka="<?= htmlspecialchars($row['jam_buka']??'') ?>"
@@ -578,8 +580,14 @@ foreach ($rows as $row) {
                     if (r) {
                         const bMin = timeToMin(jamBuka.substring(0, 5));
                         const tMin = timeToMin(jamTutup.substring(0, 5));
-                        // toko must overlap with the range
-                        if (bMin === null || tMin === null || tMin < r[0] || bMin > r[1]) show = false;
+                        if (bMin === null || tMin === null) {
+                            show = false;
+                        } else if (tMin <= bMin) {
+                            // overnight store (e.g. 18:00 - 02:00) overlaps [bMin, 1440] or [0, tMin]
+                            if (bMin > r[1] && tMin < r[0]) show = false;
+                        } else if (tMin < r[0] || bMin > r[1]) {
+                            show = false;
+                        }
                     }
                 }
             }
@@ -590,7 +598,7 @@ foreach ($rows as $row) {
             // Panel harga
             if (show && state.harga > 0) {
                 if (state.harga === 1) {
-                    if (minHarga >= 5000) show = false;
+                    if (minHarga <= 0 || minHarga >= 5000) show = false;
                 } else if (state.harga === 5000) {
                     if (minHarga < 5000 || minHarga >= 10000) show = false;
                 } else if (state.harga === 10000) {
@@ -629,8 +637,8 @@ foreach ($rows as $row) {
                     .dataset.rating) || 0);
                 if (state.sort === 'rating_asc') return (parseFloat(a.dataset.rating) || 0) - (parseFloat(b
                     .dataset.rating) || 0);
-                if (state.sort === 'nama_az') return a.dataset.nama.localeCompare(b.dataset.nama);
-                if (state.sort === 'nama_za') return b.dataset.nama.localeCompare(a.dataset.nama);
+                if (state.sort === 'nama_az') return (a.dataset.title || a.dataset.nama).localeCompare(b.dataset.title || b.dataset.nama, 'id');
+                if (state.sort === 'nama_za') return (b.dataset.title || b.dataset.nama).localeCompare(a.dataset.title || a.dataset.nama, 'id');
                 if (state.sort === 'harga_asc') return (parseInt(a.dataset.minHarga) || 0) - (parseInt(b.dataset
                     .minHarga) || 0);
                 return 0;
@@ -692,6 +700,10 @@ foreach ($rows as $row) {
     document.getElementById('searchInput').addEventListener('input', () => {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(applyFilters, 300);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeFilter();
     });
 
     applyFilters();

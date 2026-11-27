@@ -121,7 +121,8 @@ $statusText = $statusLabels[$order['status']] ?? $order['status'];
         </div>
 
         <div class="success-actions">
-            <a class="btn-back-store" href="page_menu.php?id_toko=<?= (int)$toko ?>">Kembali ke Toko</a>
+            <a class="btn-back-store" href="cek_pesanan.php?id=<?= (int)$order['id_pesanan'] ?>">Lacak Status Pesanan</a>
+            <a class="btn-back-home" href="page_menu.php?id_toko=<?= (int)$toko ?>">Kembali ke Toko</a>
             <a class="btn-back-home" href="index.php">Daftar Toko</a>
         </div>
     </div>
