@@ -7,9 +7,8 @@ require_once '../app/config/database.php';
 try {
     $idToko = post_int('id_toko');
     $nama = post_text('nama', 100);
-    $telepon = post_text('telepon', 30);
+    $telepon = validate_phone(post_text('telepon', 30));
     $catatan = post_text('catatan', 500, false);
-    if (!preg_match('/^[0-9+() -]{6,30}$/', $telepon)) throw new InvalidArgumentException('Nomor telepon tidak valid.');
     $cart = json_decode((string)($_POST['cart'] ?? ''), true, 512, JSON_THROW_ON_ERROR);
     if (!is_array($cart) || !$cart || count($cart) > 50) throw new InvalidArgumentException('Keranjang tidak valid.');
 

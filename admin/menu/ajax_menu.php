@@ -1,6 +1,7 @@
 <?php
 require '../../app/config/security.php';
 require_admin();
+verify_csrf();
 include '../../app/config/database.php';
 
 $keyword = trim((string) ($_POST['keyword'] ?? ''));

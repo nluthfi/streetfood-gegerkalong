@@ -14,6 +14,14 @@ try {
         throw new InvalidArgumentException('Menu tidak ditemukan.');
     }
 
+    $usedStmt = $koneksi->prepare('SELECT 1 FROM detail_pesanan WHERE id_menu = ? LIMIT 1');
+    $usedStmt->bind_param('i', $id);
+    $usedStmt->execute();
+    if ($usedStmt->get_result()->num_rows > 0) {
+        header('Location: ' . app_url('admin/menu/menu.php?error=used'));
+        exit;
+    }
+
     $stmt = $koneksi->prepare('DELETE FROM menu WHERE id_menu = ?');
     $stmt->bind_param('i', $id);
     $stmt->execute();

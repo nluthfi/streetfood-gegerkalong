@@ -149,6 +149,11 @@ $stmtRev->execute();
 $r = $stmtRev->get_result();
 if ($r) while ($row = $r->fetch_assoc()) $reviews[] = $row;
 $reviewSuccess = ($_GET['review'] ?? '') === 'success';
+$reviewErrorMessages = [
+    'rate' => 'Terlalu banyak ulasan dalam waktu singkat. Silakan tunggu beberapa menit.',
+    'invalid' => 'Pastikan nama, rating (1-5), dan komentar terisi dengan benar.',
+];
+$reviewError = $reviewErrorMessages[(string) ($_GET['review_error'] ?? '')] ?? '';
 $rating_text = $toko['rating'] ? number_format($toko['rating'], 1) : '–';
 
 function fotoUrl($val, $folder) {
@@ -388,6 +393,12 @@ function fotoUrl($val, $folder) {
             <div class="review-alert" role="status">
                 <i class="fas fa-check-circle" aria-hidden="true"></i>
                 <span>Ulasan Anda berhasil dikirim. Terima kasih!</span>
+            </div>
+            <?php endif; ?>
+            <?php if ($reviewError !== ''): ?>
+            <div class="review-alert review-alert-error" role="alert">
+                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                <span><?= e($reviewError) ?></span>
             </div>
             <?php endif; ?>
             <form action="submit_review.php" method="POST" class="review-form">

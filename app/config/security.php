@@ -78,6 +78,10 @@ function upload_image(array $file, string $directory, int $maxBytes = 2097152): 
     }
 
     $tmp = $file['tmp_name'] ?? '';
+    if (!is_string($tmp) || $tmp === '' || !is_uploaded_file($tmp)) {
+        throw new InvalidArgumentException('Upload gambar tidak valid.');
+    }
+
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($tmp);
     $extensions = [
         'image/jpeg' => 'jpg',
@@ -85,7 +89,7 @@ function upload_image(array $file, string $directory, int $maxBytes = 2097152): 
         'image/webp' => 'webp',
     ];
 
-    if (!isset($extensions[$mime]) || @getimagesize($tmp) === false) {
+    if (!is_string($mime) || !isset($extensions[$mime]) || @getimagesize($tmp) === false) {
         throw new InvalidArgumentException('Format gambar tidak didukung.');
     }
 
@@ -145,4 +149,73 @@ function validate_time(string $time): string
         throw new InvalidArgumentException('Jam operasional tidak valid.');
     }
     return $time;
+}
+
+function validate_phone(string $phone): string
+{
+    if (!preg_match('/^[0-9+() -]{6,30}$/', $phone)) {
+        throw new InvalidArgumentException('Nomor telepon tidak valid.');
+    }
+    return $phone;
+}
+
+/**
+ * Checks whether a session-scoped rate-limit bucket has reached maxAttempts within windowSeconds.
+ */
+function is_rate_limited(string $bucket, int $maxAttempts, int $windowSeconds): bool
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        start_secure_session();
+    }
+
+    $now = time();
+    $entry = $_SESSION['rate_limits'][$bucket] ?? null;
+    if (!is_array($entry) || ($now - (int) ($entry['start'] ?? 0)) > $windowSeconds) {
+        $_SESSION['rate_limits'][$bucket] = ['count' => 0, 'start' => $now];
+        return false;
+    }
+
+    return (int) ($entry['count'] ?? 0) >= $maxAttempts;
+}
+
+/**
+ * Records an attempt in a session-scoped rate-limit bucket.
+ */
+function record_rate_attempt(string $bucket, int $windowSeconds): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        start_secure_session();
+    }
+
+    $now = time();
+    $entry = $_SESSION['rate_limits'][$bucket] ?? null;
+    if (!is_array($entry) || ($now - (int) ($entry['start'] ?? 0)) > $windowSeconds) {
+        $entry = ['count' => 0, 'start' => $now];
+    }
+    $entry['count'] = (int) ($entry['count'] ?? 0) + 1;
+    $_SESSION['rate_limits'][$bucket] = $entry;
+}
+
+/**
+ * Clears a session-scoped rate-limit bucket after a successful action.
+ */
+function clear_rate_limit(string $bucket): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        unset($_SESSION['rate_limits'][$bucket]);
+    }
+}
+
+/**
+ * Parses positive unique integer IDs from a POST array input.
+ */
+function post_int_list(string $key): array
+{
+    $raw = $_POST[$key] ?? [];
+    if (!is_array($raw)) {
+        return [];
+    }
+
+    $ids = array_filter(array_map('intval', $raw), static fn(int $id): bool => $id > 0);
+    return array_values(array_unique($ids));
 }

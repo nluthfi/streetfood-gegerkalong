@@ -11,14 +11,9 @@ if ($username === '' || mb_strlen($username) > 255 || $password === '') {
     exit;
 }
 
-$now = time();
 $window = 15 * 60;
 $maxAttempts = 5;
-$attempts = $_SESSION['login_attempts'] ?? ['count' => 0, 'start' => $now];
-if ($now - (int)$attempts['start'] > $window) {
-    $attempts = ['count' => 0, 'start' => $now];
-}
-if ((int)$attempts['count'] >= $maxAttempts) {
+if (is_rate_limited('login_attempts', $maxAttempts, $window)) {
     header('Location: login.php?error=rate');
     exit;
 }
@@ -29,7 +24,7 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
 if ($user && password_verify($password, $user['password'])) {
-    unset($_SESSION['login_attempts']);
+    clear_rate_limit('login_attempts');
     session_regenerate_id(true);
     $_SESSION['login'] = true;
     $_SESSION['id_user'] = (int)$user['id_user'];
@@ -38,7 +33,6 @@ if ($user && password_verify($password, $user['password'])) {
     exit;
 }
 
-$attempts['count']++;
-$_SESSION['login_attempts'] = $attempts;
+record_rate_attempt('login_attempts', $window);
 header('Location: login.php?error=invalid');
 exit;

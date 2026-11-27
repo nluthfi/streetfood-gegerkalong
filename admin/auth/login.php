@@ -2,6 +2,18 @@
 require_once '../../app/config/app.php';
 require_once '../../app/config/security.php';
 start_secure_session();
+
+if (!empty($_SESSION['login'])) {
+    header('Location: ' . app_url('admin/dashboard.php'));
+    exit;
+}
+
+$errorMessages = [
+    'invalid' => 'Username atau password salah. Silakan coba lagi.',
+    'rate' => 'Terlalu banyak percobaan login. Silakan tunggu 15 menit lagi.',
+];
+$errorCode = (string) ($_GET['error'] ?? '');
+$errorMessage = $errorMessages[$errorCode] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -25,14 +37,21 @@ start_secure_session();
             <h2 class="h5 text-white fw-bold mb-1">Selamat Datang</h2>
             <p class="subtitle mb-4">Silakan masuk ke akun Anda</p>
 
-            <form  action="proses_login.php" method="POST">
+            <?php if ($errorMessage !== ''): ?>
+            <div class="alert alert-danger py-2 px-3 small text-start mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
+                <?= e($errorMessage) ?>
+            </div>
+            <?php endif; ?>
+
+            <form action="proses_login.php" method="POST">
                 <?= csrf_field() ?>
                 
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label text-light-gray small fw-medium mb-2">Username atau Email</label>
                     <div class="input-group-kustom">
                         <i class="bi bi-person-fill input-icon"></i>
-                        <input type="text" class="form-control-kustom" id="username" name="username" placeholder="Masukkan username Anda..." required>
+                        <input type="text" class="form-control-kustom" id="username" name="username" autocomplete="username" placeholder="Masukkan username Anda..." required>
                     </div>
                 </div>
 
@@ -40,7 +59,7 @@ start_secure_session();
                     <label for="password" class="form-label text-light-gray small fw-medium mb-2">Password</label>
                     <div class="input-group-kustom">
                         <i class="bi bi-lock-fill input-icon"></i>
-                        <input type="password" class="form-control-kustom" id="password" name="password" placeholder="Masukkan kata sandi..." required>
+                        <input type="password" class="form-control-kustom" id="password" name="password" autocomplete="current-password" placeholder="Masukkan kata sandi..." required>
                     </div>
                 </div>
                 <button type="submit" class="btn-accent-kustom w-100 fw-bold py-3 mb-2">Masuk</button>

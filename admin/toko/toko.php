@@ -13,6 +13,16 @@ while($row = mysqli_fetch_assoc($result)){
 }
 
 $i = 1;
+$successMessages = [
+    'tambah' => 'Data toko berhasil ditambahkan.',
+    'edit' => 'Data toko berhasil diperbarui.',
+    'hapus' => 'Data toko berhasil dihapus.',
+];
+$errorMessages = [
+    'used' => 'Toko tidak dapat dihapus karena masih memiliki menu, ulasan, atau riwayat pesanan.',
+];
+$successMsg = $successMessages[(string) ($_GET['success'] ?? '')] ?? '';
+$errorMsg = $errorMessages[(string) ($_GET['error'] ?? '')] ?? '';
 ?>
 
 <!-- MAIN CONTENT -->
@@ -21,6 +31,19 @@ $i = 1;
     <div class="mb-4">
         <h2 class="fw-bold">STREET FOOD</h2>
     </div>
+
+    <?php if ($successMsg !== ''): ?>
+    <div class="admin-alert-success" role="status">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <span><?= e($successMsg) ?></span>
+    </div>
+    <?php endif; ?>
+    <?php if ($errorMsg !== ''): ?>
+    <div class="admin-alert-error" role="alert">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <span><?= e($errorMsg) ?></span>
+    </div>
+    <?php endif; ?>
 
     <div class="table-container">
 
@@ -171,7 +194,7 @@ $metodeQuery = $metodeStmt->get_result();
 
                         <?php while($mp = mysqli_fetch_assoc($metodeQuery)) { ?>
                         <span class="custom-badge">
-                            <?= $mp['metode_pembayaran']; ?>
+                            <?= e($mp['metode_pembayaran']); ?>
                         </span>
                         <?php } ?>
 

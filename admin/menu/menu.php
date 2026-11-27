@@ -25,9 +25,26 @@ $stmt->execute();
 $menus = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $totalPages = max(1, (int)ceil($totalRows / $perPage));
 if ($page > $totalPages) { header('Location: menu.php?page='.$totalPages.'&q='.rawurlencode($keyword)); exit; }
+
+$successMessages = [
+    'tambah' => 'Data menu berhasil ditambahkan.',
+    'edit' => 'Data menu berhasil diperbarui.',
+    'hapus' => 'Data menu berhasil dihapus.',
+];
+$errorMessages = [
+    'used' => 'Menu tidak dapat dihapus karena tercatat dalam riwayat pesanan.',
+];
+$successMsg = $successMessages[(string) ($_GET['success'] ?? '')] ?? '';
+$errorMsg = $errorMessages[(string) ($_GET['error'] ?? '')] ?? '';
 ?>
 <main class="main-content">
 <div class="mb-4"><h2 class="fw-bold">STREET FOOD</h2></div>
+<?php if ($successMsg !== ''): ?>
+<div class="admin-alert-success" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= e($successMsg) ?></span></div>
+<?php endif; ?>
+<?php if ($errorMsg !== ''): ?>
+<div class="admin-alert-error" role="alert"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><?= e($errorMsg) ?></span></div>
+<?php endif; ?>
 <div class="table-container">
 <div class="table-header"><div><h4>Data Menu</h4><p><?= number_format($totalRows) ?> menu, tampil <?= $perPage ?> per halaman</p></div><a class="btn btn-primary" href="tambah_menu.php"><i class="fa-solid fa-plus"></i> Tambah Data</a></div>
 <form method="GET" class="d-flex gap-2 mb-3"><input class="form-control" type="search" name="q" value="<?= e($keyword) ?>" placeholder="Cari menu atau toko..."><button class="btn btn-outline-secondary">Cari</button></form>

@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Asia/Jakarta');
+
 function app_base_url(): string
 {
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';

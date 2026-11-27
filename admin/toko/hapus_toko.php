@@ -14,7 +14,7 @@ try {
         throw new InvalidArgumentException('Toko tidak ditemukan.');
     }
 
-    foreach (['menu' => 'id_toko', 'review' => 'id_toko'] as $table => $column) {
+    foreach (['menu' => 'id_toko', 'review' => 'id_toko', 'pesanan' => 'id_toko'] as $table => $column) {
         $stmt = $koneksi->prepare("SELECT 1 FROM `$table` WHERE `$column` = ? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();

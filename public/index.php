@@ -211,7 +211,7 @@ foreach ($rows as $row) {
                 data-jam-tutup="<?= htmlspecialchars($row['jam_tutup']??'') ?>"
                 data-rating="<?= (float)$row['rating'] ?>" data-min-harga="<?= $min_harga ?>"
                 data-mitra-ids="<?= htmlspecialchars(implode(',', array_column($mitras,'id_mitra'))) ?>"
-                data-bayar-ids="<?= htmlspecialchars(implode(',', $bayar_map[$row['id_toko']] ? array_column($bayar_map[$row['id_toko']],'id_metode') : [])) ?>"
+                data-bayar-ids="<?= htmlspecialchars(implode(',', array_column($bayar_map[$row['id_toko']] ?? [], 'id_metode'))) ?>"
                 data-rasa="<?= htmlspecialchars(implode(',', $rasa_map[$row['id_toko']] ?? [])) ?>">
                 
                 <!-- Foto Toko -->

@@ -8,18 +8,15 @@ $uploaded = null;
 try {
     $id = post_int('id_toko');
     $nama = post_text('nama_toko', 255);
-    $telepon = post_text('no_telepon', 30);
+    $telepon = validate_phone(post_text('no_telepon', 30));
     $lokasi = post_text('lokasi', 255);
     $jamBuka = post_text('jam_buka', 8);
     $jamTutup = post_text('jam_tutup', 8);
     $status = validate_halal(post_text('status_halal', 40));
-    if (!preg_match('/^[0-9+() -]{6,30}$/', $telepon)) {
-        throw new InvalidArgumentException('Nomor telepon tidak valid.');
-    }
     validate_time($jamBuka);
     validate_time($jamTutup);
-    $mitra = array_filter(array_map('intval', (array) ($_POST['mitra'] ?? [])));
-    $metode = array_filter(array_map('intval', (array) ($_POST['metode'] ?? [])));
+    $mitra = post_int_list('mitra');
+    $metode = post_int_list('metode');
 
     $stmt = $koneksi->prepare('SELECT foto_outlet FROM toko WHERE id_toko = ?');
     $stmt->bind_param('i', $id);
