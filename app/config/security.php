@@ -106,6 +106,19 @@ function upload_image(array $file, string $directory, int $maxBytes = 2097152): 
     return $filename;
 }
 
+/**
+ * Uploads an optional image field when a file was provided; returns null when omitted.
+ */
+function optional_upload_image(string $field, string $directory, int $maxBytes = 2097152): ?string
+{
+    $file = $_FILES[$field] ?? null;
+    if (!is_array($file) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+
+    return upload_image($file, $directory, $maxBytes);
+}
+
 function remove_local_upload(string $directory, ?string $filename): void
 {
     if (!$filename || preg_match('/^https?:\/\//i', $filename)) {

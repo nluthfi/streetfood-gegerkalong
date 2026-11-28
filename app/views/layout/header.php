@@ -19,7 +19,7 @@ require_admin();
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= app_url('public/assets/css/style.css?v=20260909') ?>">
-    <link rel="stylesheet" href="<?= app_url('public/assets/css/form.css?v=20261127b') ?>">
+    <link rel="stylesheet" href="<?= app_url('public/assets/css/form.css?v=20261128') ?>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
