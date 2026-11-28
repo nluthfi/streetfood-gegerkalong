@@ -266,9 +266,13 @@ foreach ($rows as $row) {
         </div>
 
         <div class="empty-state hidden" id="emptyState">
-            <i class="fas fa-store-slash"></i>
+            <i class="fas fa-store-slash" aria-hidden="true"></i>
             <h3>Tidak ada toko ditemukan</h3>
             <p>Coba ubah filter atau kata kunci pencarian</p>
+            <button type="button" class="btn-reset-inline" onclick="resetFilter()">
+                <i class="fas fa-rotate-left" aria-hidden="true"></i>
+                <span>Reset Filter</span>
+            </button>
         </div>
     </div>
 
